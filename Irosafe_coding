@@ -1,0 +1,37 @@
+const int analogInputPin = A0;    // Analog input pin
+const int ledPin = 6;              // Digital output pin for the LED
+const unsigned long interval = 3000;  // 3 seconds in milliseconds
+
+unsigned long lastInputTime = 0;   // Store the time of the last analog input
+bool ledState = LOW;               // Initial LED state (OFF)
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, ledState);  // Initialize the LED state
+  Serial.begin(19200);
+}
+
+void loop() {
+  // Read the analog input value
+  int analogValue = analogRead(analogInputPin);
+  Serial.print("Analog Value: ");
+  Serial.println(analogValue);
+
+  // Check if analog input is detected
+  if (analogValue > 0) {
+    lastInputTime = millis();      // Update the last input time
+    Serial.println("Analog input detected. LED will stay on.");
+  }
+
+  // Check if it's been 3 seconds since the last input and turn off the LED
+  if (millis() - lastInputTime >= interval) {
+    digitalWrite(ledPin, HIGH);    // Turn off the LED
+    ledState = HIGH;
+    Serial.println("No analog input for 3 seconds. LED turned off.");
+  } else {
+    digitalWrite(ledPin, LOW);   // Keep the LED on
+    ledState = LOW;
+  }
+
+  delay(500);  // Delay for stability and to make the Serial Monitor easier to read
+}
